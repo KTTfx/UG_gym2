@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sampleUsers } from '../data/sampleData';
+import { Link } from 'react-router-dom';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -112,11 +113,13 @@ export default function LoginForm() {
           Login
         </button>
 
+        
+
         <p className="text-center text-sm text-gray-600">
           Don't have an account?{' '}
-          <a href="/register" className="text-[#002147] font-semibold hover:underline">
-            Register here
-          </a>
+          <Link to="/register" className="text-[#002147] font-semibold hover:underline">
+          Register here
+          </Link>
         </p>
       </form>
     </div>
