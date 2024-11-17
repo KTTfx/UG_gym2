@@ -11,43 +11,66 @@ interface PricingPlansProps {
 export default function PricingPlans({ userType: initialUserType, allowTypeSelection = false }: PricingPlansProps) {
   const navigate = useNavigate();
   const [selectedUserType, setSelectedUserType] = useState<UserType>(initialUserType || 'public');
-  const isUniversityMember = selectedUserType === 'student' || selectedUserType === 'staff';
   
+  // Plan pricing logic based on user type
+  const planPricing = {
+    student: {
+      walkIn: 10,
+      monthly: 100,
+      semesterly: 250,
+      halfYearly: 400,
+      yearly: 700,
+    },
+    staff: {
+      walkIn: 15,
+      monthly: 160,
+      semesterly: 400,
+      halfYearly: 700,
+      yearly: 1200,
+    },
+    public: {
+      walkIn: 25,
+      monthly: 300,
+      semesterly: 750,
+      halfYearly: 1300,
+      yearly: 2200,
+    },
+  };
+
+  const isUniversityMember = selectedUserType === 'student' || selectedUserType === 'staff';
+
+  // Define plans with pricing from planPricing based on selected user type
   const plans = [
     {
-      title: 'Basic Plan',
-      price: isUniversityMember ? 30 : 50,
+      title: 'Walk-In Plan',
+      price: planPricing[selectedUserType].walkIn,
+      duration: 'day',
+      features: ['Access to gym equipment'],
+    },
+    {
+      title: 'Monthly Plan',
+      price: planPricing[selectedUserType].monthly,
       duration: 'month',
-      features: [
-        'Access to gym equipment',
-        'Locker room access',
-        'Basic fitness assessment'
-      ]
+      features: ['Access to gym equipment', 'Locker room access'],
     },
     {
-      title: 'Premium Plan',
-      price: isUniversityMember ? 80 : 130,
+      title: 'Semesterly / Quarterly Plan',
+      price: planPricing[selectedUserType].semesterly,
       duration: 'quarter',
-      features: [
-        'All Basic Plan features',
-        'Personal trainer consultation',
-        'Access to fitness classes',
-        'Nutrition guidance'
-      ],
-      isPopular: true
+      features: ['All Monthly Plan features', 'Personal trainer consultation'],
     },
     {
-      title: 'Elite Plan',
-      price: isUniversityMember ? 300 : 450,
+      title: 'Half-Yearly Plan',
+      price: planPricing[selectedUserType].halfYearly,
+      duration: 'half year',
+      features: ['All Semesterly Plan features', 'Access to fitness classes'],
+    },
+    {
+      title: 'Yearly Plan',
+      price: planPricing[selectedUserType].yearly,
       duration: 'year',
-      features: [
-        'All Premium Plan features',
-        'Unlimited personal training',
-        'Priority class booking',
-        'Complimentary supplements',
-        'Guest passes'
-      ]
-    }
+      features: ['All Half-Yearly Plan features', 'Unlimited personal training'],
+    },
   ];
 
   const handleSelectPlan = (plan: typeof plans[0]) => {
@@ -100,11 +123,7 @@ export default function PricingPlans({ userType: initialUserType, allowTypeSelec
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {plans.map((plan, index) => (
-          <SubscriptionCard 
-            key={index} 
-            {...plan} 
-            onSelect={() => handleSelectPlan(plan)} 
-          />
+          <SubscriptionCard key={index} {...plan} onSelect={() => handleSelectPlan(plan)} />
         ))}
       </div>
     </div>

@@ -1,9 +1,9 @@
 export const sampleUsers = {
   'student123': {
     id: 'u1',
-    name: 'John Doe',
-    email: 'john@ug.edu.gh',
-    dateOfBirth: '1999-05-15',
+    name: 'Nsroma Arhin',
+    email: 'nknarhin@st.ug.edu.gh',
+    dateOfBirth: '2004-05-15',
     gender: 'male',
     address: 'Commonwealth Hall',
     contactNumber: '0241234567',

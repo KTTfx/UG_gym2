@@ -41,7 +41,7 @@ export default function PaymentPending({ planTitle }: PaymentPendingProps) {
           <ol className="space-y-3">
             {[
               'Visit the University of Ghana Gym',
-              'Present your ID at the front desk',
+              'Present your ID at the front desk if you are a student',
               'Make your payment',
               'Your subscription will be activated immediately'
             ].map((step, index) => (
