@@ -20,6 +20,12 @@ export default function LoginForm() {
     const user = sampleUsers[identifier];
 
     if (user && user.password === formData.password) {
+      // For testing subscription success, navigate to success page if user has pending subscription
+      if (user.subscription?.status === 'pending') {
+        navigate('/subscription-success');
+        return;
+      }
+      
       if (user.userType === 'admin') {
         navigate('/admin-dashboard', { state: { user } });
       } else {

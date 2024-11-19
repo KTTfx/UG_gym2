@@ -5,7 +5,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Plans from './pages/Plans';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import PaymentPending from './components/PaymentPending';
+import MedicalClearance from './pages/MedicalClearance';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
 
 function App() {
   return (
@@ -17,7 +20,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/payment-pending" element={<PaymentPending />} />
+        <Route path="/medical-clearance" element={<MedicalClearance />} />
+        <Route path="/subscription-success" element={<SubscriptionSuccess />} />
       </Routes>
     </div>
   );
