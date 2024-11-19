@@ -3,7 +3,8 @@ import { useState } from 'react';
 function RegistrationForm() {
   const [formData, setFormData] = useState({
     userType: 'student', // default user type
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phoneNumber: '',
     password: '',
@@ -11,6 +12,10 @@ function RegistrationForm() {
     medicalCondition: '',
     agreeToDisclaimer: false,
     hasMedicalCondition: null, // null means neither "Yes" nor "No" is selected yet
+    studentId: '',
+    hallOfResidence: '',
+    staffId: '',
+    department: '',
   });
 
   const handleCheckboxChange = (value) => {
@@ -39,17 +44,79 @@ function RegistrationForm() {
         </select>
       </div>
 
-      {/* Name Field */}
+      {/* First Name and Last Name Fields */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
         <input
           type="text"
           required
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={formData.firstName}
+          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
         />
       </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+        <input
+          type="text"
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+          value={formData.lastName}
+          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+        />
+      </div>
+
+      {/* Additional Fields for Student or Staff */}
+      {formData.userType === 'student' && (
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+              value={formData.studentId}
+              onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Hall of Residence</label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+              value={formData.hallOfResidence}
+              onChange={(e) => setFormData({ ...formData, hallOfResidence: e.target.value })}
+            />
+          </div>
+        </>
+      )}
+
+      {formData.userType === 'staff' && (
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Staff ID</label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+              value={formData.staffId}
+              onChange={(e) => setFormData({ ...formData, staffId: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+              value={formData.department}
+              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+            />
+          </div>
+        </>
+      )}
 
       {/* Email Field */}
       <div>
@@ -159,14 +226,12 @@ function RegistrationForm() {
       </div>
 
       {/* Submit Button */}
-      <div className="mt-6">
-        <button
-          type="submit"
-          className="w-full bg-[#002147] text-white py-2 px-4 rounded-md hover:bg-[#00172e] transition duration-300"
-        >
-          Register
-        </button>
-      </div>
+      <button
+        type="submit"
+        className="w-full bg-[#002147] text-white px-4 py-2 rounded-md hover:bg-[#003366] transition-colors"
+      >
+        Register
+      </button>
     </form>
   );
 }
