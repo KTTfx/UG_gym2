@@ -1,5 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Dumbbell, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react'; // Import only necessary icons
+
+// Import your logo image
+import logo from '../ug_gym_logo2.png';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -13,13 +16,16 @@ export default function Header() {
   return (
     <header className="bg-[#002147] text-white py-4 shadow-lg">
       <div className="container mx-auto px-4 flex items-center justify-between">
+        {/* Logo section, which is always displayed */}
         <div 
           onClick={() => navigate('/')} 
           className="flex items-center space-x-3 cursor-pointer"
         >
-          <Dumbbell className="h-8 w-8 text-[#FFD700]" />
-          <h1 className="text-2xl font-bold tracking-tight">UG Gym</h1>
+          {/* Display the logo image */}
+          <img src={logo} alt="UG Gym Logo" className="h-14 w-auto" />
         </div>
+
+        {/* Navigation section */}
         <nav className="flex items-center space-x-6">
           {!isLoggedIn ? (
             <>
