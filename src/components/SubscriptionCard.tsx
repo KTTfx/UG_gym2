@@ -27,7 +27,6 @@ export default function SubscriptionCard({
       <h3 className="text-2xl font-bold mb-4">{title}</h3>
       <div className="mb-6">
         <span className="text-4xl font-bold">GH₵{price}</span>
-        <span className={`${isPopular ? 'text-gray-300' : 'text-gray-500'}`}>/{duration}</span>
       </div>
       <ul className="space-y-3 mb-8">
         {features.map((feature, index) => (

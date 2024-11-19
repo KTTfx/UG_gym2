@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sampleUsers } from '../data/sampleData';
-import { Link } from 'react-router-dom';
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const [isUniversityMember, setIsUniversityMember] = useState(true);
   const [formData, setFormData] = useState({
     universityId: '',
-    phoneNumber: '',
+    email: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -17,11 +16,15 @@ export default function LoginForm() {
     e.preventDefault();
     setError('');
 
-    const identifier = isUniversityMember ? formData.universityId : formData.phoneNumber;
+    const identifier = isUniversityMember ? formData.universityId : formData.email;
     const user = sampleUsers[identifier];
 
     if (user && user.password === formData.password) {
-      navigate('/dashboard', { state: { user } });
+      if (user.userType === 'admin') {
+        navigate('/admin-dashboard', { state: { user } });
+      } else {
+        navigate('/dashboard', { state: { user } });
+      }
     } else {
       setError('Invalid credentials');
     }
@@ -80,14 +83,14 @@ export default function LoginForm() {
           ) : (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
+                Email Address
               </label>
               <input
-                type="tel"
+                type="email"
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
-                value={formData.phoneNumber}
-                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
           )}
@@ -113,13 +116,11 @@ export default function LoginForm() {
           Login
         </button>
 
-        
-
         <p className="text-center text-sm text-gray-600">
           Don't have an account?{' '}
-          <Link to="/register" className="text-[#002147] font-semibold hover:underline">
-          Register here
-          </Link>
+          <a href="/register" className="text-[#002147] font-semibold hover:underline">
+            Register here
+          </a>
         </p>
       </form>
     </div>
