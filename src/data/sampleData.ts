@@ -8,7 +8,7 @@ export const sampleUsers = {
   },
   'student123': {
     id: 'u1',
-    name: 'John Doe',
+    name: 'Nsroma Arhin',
     email: 'john@ug.edu.gh',
     userType: 'student',
     password: 'password123',
