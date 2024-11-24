@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { UserType } from '../types';
 import SubscriptionCard from './SubscriptionCard';
@@ -6,12 +6,18 @@ import SubscriptionCard from './SubscriptionCard';
 interface PricingPlansProps {
   userType?: UserType;
   allowTypeSelection?: boolean;
+  pendingSubscription?: { plan: string; expiresAt: string }; // Include pending subscription props
 }
 
-export default function PricingPlans({ userType: initialUserType, allowTypeSelection = false }: PricingPlansProps) {
+export default function PricingPlans({
+  userType: initialUserType,
+  allowTypeSelection = false,
+  pendingSubscription,
+}: PricingPlansProps) {
   const navigate = useNavigate();
   const [selectedUserType, setSelectedUserType] = useState<UserType>(initialUserType || 'public');
-  
+  const [hasPendingSubscription, setHasPendingSubscription] = useState(!!pendingSubscription);
+
   // Plan pricing logic based on user type
   const planPricing = {
     student: {
@@ -45,25 +51,25 @@ export default function PricingPlans({ userType: initialUserType, allowTypeSelec
       title: 'Walk-In Plan',
       price: planPricing[selectedUserType].walkIn,
       duration: 'day',
-      features: ['Access to gym equipment'],
+      
     },
     {
       title: 'Monthly Plan',
       price: planPricing[selectedUserType].monthly,
       duration: 'month',
-      features: ['Access to gym equipment', 'Locker room access'],
+      
     },
     {
       title: 'Semesterly / Quarterly Plan',
       price: planPricing[selectedUserType].semesterly,
       duration: 'quarter',
-      features: ['All Monthly Plan features', 'Personal trainer consultation'],
+      
     },
     {
       title: 'Half-Yearly Plan',
       price: planPricing[selectedUserType].halfYearly,
       duration: 'half year',
-      features: ['All Semesterly Plan features', 'Access to fitness classes'],
+      
     },
     {
       title: 'Yearly Plan',
@@ -74,12 +80,32 @@ export default function PricingPlans({ userType: initialUserType, allowTypeSelec
   ];
 
   const handleSelectPlan = (plan: typeof plans[0]) => {
+    if (hasPendingSubscription) {
+      alert('You already have a pending subscription. Please complete the payment or edit your plan.');
+      return;
+    }
     if (!initialUserType) {
       navigate('/register');
       return;
     }
     navigate('/payment-pending', { state: { plan } });
   };
+
+  const handleEditSubscription = () => {
+    navigate('/payment-pending', { state: { plan: pendingSubscription?.plan } });
+  };
+
+  useEffect(() => {
+    if (pendingSubscription) {
+      const expirationTime = new Date(pendingSubscription.expiresAt).getTime();
+      const currentTime = Date.now();
+
+      if (currentTime > expirationTime) {
+        setHasPendingSubscription(false);
+        alert('Your pending subscription has expired. Please select a new plan.');
+      }
+    }
+  }, [pendingSubscription]);
 
   return (
     <div className="space-y-8">
@@ -121,11 +147,24 @@ export default function PricingPlans({ userType: initialUserType, allowTypeSelec
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {plans.map((plan, index) => (
-          <SubscriptionCard key={index} {...plan} onSelect={() => handleSelectPlan(plan)} />
-        ))}
-      </div>
+      {hasPendingSubscription ? (
+        <div className="bg-yellow-100 p-4 rounded-lg shadow-md">
+          <h4 className="text-md font-semibold text-yellow-800">Pending Subscription</h4>
+          <p>Please complete payment for your pending subscription or edit the plan.</p>
+          <button
+            onClick={handleEditSubscription}
+            className="mt-2 px-4 py-2 bg-[#002147] text-white rounded-lg"
+          >
+            Edit Subscription
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {plans.map((plan, index) => (
+            <SubscriptionCard key={index} {...plan} onSelect={() => handleSelectPlan(plan)} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

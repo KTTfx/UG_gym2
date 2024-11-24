@@ -7,7 +7,7 @@ export interface User {
   name: string;
   email: string;
   dateOfBirth: string;
-  gender: 'male' | 'female' | 'other';
+  gender: 'male' | 'female' |;
   address: string;
   contactNumber: string;
   userType: UserType;

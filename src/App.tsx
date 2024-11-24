@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import Plans from './pages/Plans';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
@@ -18,12 +19,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/payment-pending" element={<PaymentPending />} />
         <Route path="/medical-clearance" element={<MedicalClearance />} />
         <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+        <Route path="/plans/:userType" element={<Plans />} />
       </Routes>
     </div>
   );

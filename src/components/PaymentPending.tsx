@@ -1,4 +1,5 @@
 import { useLocation, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface PaymentPendingProps {
   planTitle?: string;
@@ -7,6 +8,23 @@ interface PaymentPendingProps {
 export default function PaymentPending({ planTitle }: PaymentPendingProps) {
   const location = useLocation();
   const plan = location.state?.plan;
+  const userType = location.state?.userType;
+
+  useEffect(() => {
+    if (plan) {
+      // Save pending subscription with 48-hour expiration
+      const expirationTime = new Date();
+      expirationTime.setHours(expirationTime.getHours() + 48);
+      
+      const pendingSubscription = {
+        plan,
+        userType,
+        expiresAt: expirationTime.toISOString()
+      };
+      
+      localStorage.setItem('pendingSubscription', JSON.stringify(pendingSubscription));
+    }
+  }, [plan, userType]);
 
   if (!plan) {
     return <Navigate to="/plans" replace />;
@@ -27,7 +45,7 @@ export default function PaymentPending({ planTitle }: PaymentPendingProps) {
         </h1>
         
         <p className="text-gray-600 text-center mb-6">
-          You've selected the {plan.title}. Please proceed to make your payment at the gym's front desk.
+          You've selected the {plan.title}. Please proceed to make your payment at the gym's front desk within 48 hours.
         </p>
         
         <div className="bg-[#FFD700] bg-opacity-10 border-2 border-[#FFD700] rounded-lg p-4 mb-6">

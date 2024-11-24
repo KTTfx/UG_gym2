@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sampleUsers } from '../data/sampleData';
+import { Link } from 'react-router-dom'
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function LoginForm() {
     const user = sampleUsers[identifier];
 
     if (user && user.password === formData.password) {
+      // Store user session in localStorage
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      
       // For testing subscription success, navigate to success page if user has pending subscription
       if (user.subscription?.status === 'pending') {
         navigate('/subscription-success');
@@ -115,6 +119,12 @@ export default function LoginForm() {
           </div>
         </div>
 
+        <p className="text-center text-sm text-gray-600">
+          <Link to="/forgot-password" className="text-[#002147] font-semibold hover:underline">
+             Forgot Password?
+          </Link>
+        </p>
+
         <button
           type="submit"
           className="w-full bg-[#002147] text-white py-3 rounded-lg font-semibold hover:bg-[#003167] transition-colors"
@@ -123,10 +133,10 @@ export default function LoginForm() {
         </button>
 
         <p className="text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <a href="/register" className="text-[#002147] font-semibold hover:underline">
+           Don't have an account?{' '}
+          <Link to="/register" className="text-[#002147] font-semibold hover:underline">
             Register here
-          </a>
+          </Link>
         </p>
       </form>
     </div>
