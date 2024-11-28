@@ -19,7 +19,9 @@ export default function LoginForm() {
 
     try {
       // Determine userType based on selection
-      const userType = isUniversityMember ? 'student' : 'public';
+      const userType = isUniversityMember
+        ? formData.universityId ? 'student' : 'staff' // Logic to distinguish student vs staff
+        : 'public'; // Public users
       const payload = {
         userType,
         password: formData.password,
@@ -30,7 +32,11 @@ export default function LoginForm() {
       };
 
       // API call to login endpoint
-      const response = await axios.post('http://localhost:3000/api/users/login', payload);
+      const loginEndpoint = isUniversityMember 
+        ? 'http://localhost:3000/api/users/login/university' 
+        : 'http://localhost:3000/api/users/login/public'; // Dynamically determine route
+
+      const response = await axios.post(loginEndpoint, payload);
 
       // Store token and user data in localStorage
       localStorage.setItem('token', response.data.token);
