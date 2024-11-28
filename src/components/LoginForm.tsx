@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sampleUsers } from '../data/sampleData';
-import { Link } from 'react-router-dom'
+import axios from 'axios'; // Import axios for HTTP requests
+import { Link } from 'react-router-dom';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -13,38 +13,50 @@ export default function LoginForm() {
   });
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const identifier = isUniversityMember ? formData.universityId : formData.email;
-    const user = sampleUsers[identifier];
+    try {
+      // Determine userType and identifier
+      const userType = isUniversityMember ? 'student' : 'public';
+      const payload = {
+        userType,
+        password: formData.password,
+        ...(isUniversityMember
+          ? { universityId: formData.universityId }
+          : { email: formData.email }),
+      };
 
-    if (user && user.password === formData.password) {
-      // Store user session in localStorage
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      
-      // For testing subscription success, navigate to success page if user has pending subscription
-      if (user.subscription?.status === 'pending') {
-        navigate('/subscription-success');
-        return;
-      }
-      
-      if (user.userType === 'admin') {
-        navigate('/admin-dashboard', { state: { user } });
+      // API call to login endpoint
+      const response = await axios.post('http://localhost:3000/api/users/login', payload);
+
+      // Store token and user data in localStorage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+
+      // Redirect based on user type
+      if (response.data.user.userType === 'admin') {
+        navigate('/admin-dashboard');
       } else {
-        navigate('/dashboard', { state: { user } });
+        navigate('/dashboard');
       }
-    } else {
-      setError('Invalid credentials');
+    } catch (err) {
+      // Handle error messages
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     }
   };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-md bg-white rounded-lg shadow-md p-6 space-y-6">
-        <h2 className="text-2xl font-bold text-[#002147] text-center">Welcome Back</h2>
-        
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md bg-white rounded-lg shadow-md p-6 space-y-6"
+      >
+        <h2 className="text-2xl font-bold text-[#002147] text-center">
+          Welcome Back
+        </h2>
+
         {error && (
           <div className="bg-red-50 text-red-500 p-3 rounded-lg text-center">
             {error}
@@ -80,14 +92,16 @@ export default function LoginForm() {
           {isUniversityMember ? (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                University ID
+                Student or Staff ID
               </label>
               <input
                 type="text"
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
                 value={formData.universityId}
-                onChange={(e) => setFormData({ ...formData, universityId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, universityId: e.target.value })
+                }
               />
             </div>
           ) : (
@@ -100,7 +114,9 @@ export default function LoginForm() {
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
           )}
@@ -114,14 +130,19 @@ export default function LoginForm() {
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
             />
           </div>
         </div>
 
         <p className="text-center text-sm text-gray-600">
-          <Link to="/forgot-password" className="text-[#002147] font-semibold hover:underline">
-             Forgot Password?
+          <Link
+            to="/forgot-password"
+            className="text-[#002147] font-semibold hover:underline"
+          >
+            Forgot Password?
           </Link>
         </p>
 
@@ -133,8 +154,11 @@ export default function LoginForm() {
         </button>
 
         <p className="text-center text-sm text-gray-600">
-           Don't have an account?{' '}
-          <Link to="/register" className="text-[#002147] font-semibold hover:underline">
+          Don't have an account?{' '}
+          <Link
+            to="/register"
+            className="text-[#002147] font-semibold hover:underline"
+          >
             Register here
           </Link>
         </p>
