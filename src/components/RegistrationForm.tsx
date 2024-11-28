@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../../ug-gym-backend/API/api";
 
 function RegistrationForm() {
@@ -15,6 +16,8 @@ function RegistrationForm() {
     universityId: "",
     hallOrDepartment: "",
   });
+
+  const navigate = useNavigate();
 
   const handleCheckboxChange = (value) => {
     setFormData((prev) => ({
@@ -40,6 +43,7 @@ function RegistrationForm() {
     try {
       const response = await registerUser(formData);
       alert(response.data.message); // show a success message
+      navigate("/login");
     } catch (error) {
       alert(error.response?.data?.message || "Something went wrong");
     }
@@ -64,6 +68,7 @@ function RegistrationForm() {
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
         >
           <option value="student">Student</option>
+          <option value="staff">Staff</option>
           <option value="public">Public</option>
         </select>
       </div>
@@ -103,7 +108,7 @@ function RegistrationForm() {
         <>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              University ID
+              Student ID
             </label>
             <input
               name="universityId"
@@ -116,7 +121,37 @@ function RegistrationForm() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Hall or Department
+              Hall of Residence
+            </label>
+            <input
+              name="hallOrDepartment"
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+              value={formData.hallOrDepartment}
+              onChange={handleChange}
+            />
+          </div>
+        </>
+      )}
+      {formData.userType === "staff" && (
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Staff ID
+            </label>
+            <input
+              name="universityId"
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+              value={formData.universityId}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Department
             </label>
             <input
               name="hallOrDepartment"
