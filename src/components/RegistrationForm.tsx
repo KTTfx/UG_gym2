@@ -14,7 +14,8 @@ function RegistrationForm() {
     hasMedicalCondition: "",
     medicalCondition: "",
     universityId: "",
-    hallOrDepartment: "",
+    department: "",
+    hallOfResidence: "",
   });
 
   const navigate = useNavigate();
@@ -124,11 +125,11 @@ function RegistrationForm() {
               Hall of Residence
             </label>
             <input
-              name="hallOrDepartment"
+              name="hallOfResidence"
               type="text"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
-              value={formData.hallOrDepartment}
+              value={formData.hallOfResidence}
               onChange={handleChange}
             />
           </div>
@@ -154,11 +155,11 @@ function RegistrationForm() {
               Department
             </label>
             <input
-              name="hallOrDepartment"
+              name="department"
               type="text"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
-              value={formData.hallOrDepartment}
+              value={formData.department}
               onChange={handleChange}
             />
           </div>
