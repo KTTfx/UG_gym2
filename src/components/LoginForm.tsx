@@ -18,14 +18,15 @@ export default function LoginForm() {
     setError('');
 
     try {
-      // Determine userType and identifier
+      // Determine userType based on selection
       const userType = isUniversityMember ? 'student' : 'public';
       const payload = {
         userType,
         password: formData.password,
         ...(isUniversityMember
-          ? { universityId: formData.universityId }
-          : { email: formData.email }),
+          ? { universityId: formData.universityId } // Use universityId for students and staff
+          : { email: formData.email }               // Use email for public users
+        ),
       };
 
       // API call to login endpoint
