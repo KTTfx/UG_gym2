@@ -21,8 +21,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/plans" element={<Plans />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/university-dashboard" element={<Dashboard />} />
+        {/* <Route path="/admin-dashboard" element={<AdminDashboard />} />  */}
         <Route path="/payment-pending" element={<PaymentPending />} />
         <Route path="/medical-clearance" element={<MedicalClearance />} />
         <Route path="/subscription-success" element={<SubscriptionSuccess />} />
