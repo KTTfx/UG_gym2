@@ -43,8 +43,8 @@ export default function LoginForm() {
       localStorage.setItem('currentUser', JSON.stringify(response.data.user));
 
       // Redirect based on user type
-      if (response.data.user.userType === 'admin') {
-        navigate('/admin-dashboard');
+      if (response.data.user.userType === 'student' || userType === "staff") {
+        navigate('/university-dashboard');
       } else {
         navigate('/dashboard');
       }
