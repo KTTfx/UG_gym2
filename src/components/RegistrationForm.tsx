@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../../ug-gym-backend/API/api";
+import { registerUser } from "../../public/API/api";
 
 function RegistrationForm() {
   const [formData, setFormData] = useState({
