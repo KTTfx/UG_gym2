@@ -16,6 +16,16 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    if (isUniversityMember && !formData.universityId) {
+      setError('University ID is required');
+      return;
+    }
+  
+    if (!isUniversityMember && !formData.email) {
+      setError('Email is required');
+      return;
+    }
 
     try {
       // Determine userType based on selection
@@ -33,23 +43,39 @@ export default function LoginForm() {
 
       // API call to login endpoint
       const loginEndpoint = isUniversityMember 
-        ? 'https://ug-gym-backend.onrender.com/api/users/login/university' 
-        : 'https://ug-gym-backend.onrender.com/api/users/login/public'; // Dynamically determine route
+        ? 'http://localhost:4000/api/users/login/university' 
+        : 'http://localhost:4000/api/users/login/public'; // Dynamically determine route
 
       const response = await axios.post(loginEndpoint, payload);
 
       // Store token and user data in localStorage
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+      // Verify if data is saved correctly
+      console.log('Token:', localStorage.getItem('token'));
+      console.log('Current User:', localStorage.getItem('currentUser'));
+      
 
       // Redirect based on user type
-      if (response.data.user.userType === 'student' || userType === "staff") {
-        navigate('/university-dashboard');
+      if (response.data.user && response.data.user.userType) {
+        switch (response.data.user.userType) {
+          case 'student':
+            navigate('/university-dashboard');
+            break;
+          case 'staff':
+            navigate('/university-dashboard');
+            break;
+          default:
+            navigate('/dashboard');
+        }
       } else {
-        navigate('/dashboard');
+        // Handle missing or incorrect userType
+        setError('User type is invalid.');
       }
+
     } catch (err) {
       // Handle error messages
+      console.error('Login Error:', err); // Log the error for debugging
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     }
   };
