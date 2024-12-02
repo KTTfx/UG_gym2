@@ -6,7 +6,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Plans from './pages/Plans';
 import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard';
+// import AdminDashboard from './pages/AdminDashboard';
 import PaymentPending from './components/PaymentPending';
 import MedicalClearance from './pages/MedicalClearance';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
