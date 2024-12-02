@@ -1,13 +1,18 @@
-import { useLocation, Navigate } from 'react-router-dom';
+// import { useLocation, Navigate } from 'react-router-dom';
 import UserDashboard from '../components/UserDashboard';
 
+import { useNavigate } from 'react-router-dom';
+
 export default function Dashboard() {
-  const location = useLocation();
-  const user = location.state?.user;
+  const navigate = useNavigate();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  // Get the token from localStorage
+  const token = localStorage.getItem('token');
+  
+  // If no token exists, redirect to login
+  if (!token) {
+    navigate('/login');
   }
-
-  return <UserDashboard user={user} subscription={user.subscription} />;
+  // You can remove the `subscription` and just rely on the one fetched within `UserDashboard`.
+  return <UserDashboard />;
 }
