@@ -2,26 +2,22 @@ export type UserType = 'student' | 'staff' | 'public';
 export type SubscriptionDuration = 'monthly' | 'quarterly' | 'annually';
 export type PaymentStatus = 'pending' | 'approved';
 
-export interface User {
-  id: string;
-  name: string;
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  dateOfBirth: string;
-  gender: 'male' | 'female' |;
-  address: string;
-  contactNumber: string;
-  userType: UserType;
-  universityId?: string;
-  hallOfResidence?: string;
-  department?: string;
+  medicalCondition: string;
+  phone: string;
+  userType: string;
+  universityId: number;
+  hallOfResidence: string;
+  department: string;
+  // subscription?: Subscription;  // Optional subscription field
 }
-
-export interface Subscription {
-  id: string;
-  userId: string;
-  duration: SubscriptionDuration;
-  startDate: string;
-  endDate: string;
-  status: PaymentStatus;
-  price: number;
+interface Subscription {
+  package: string;
+  startDate: Date;
+  endDate: Date;
+  status: boolean;
 }
