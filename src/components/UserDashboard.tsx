@@ -212,7 +212,7 @@ export default function UserDashboard({ user }: UserDashboardProps) {
           )}
         </div>
       ) : (
-        <PricingPlans />
+        <PricingPlans userType={userData?.userType} />
       )}
     </div>
   );

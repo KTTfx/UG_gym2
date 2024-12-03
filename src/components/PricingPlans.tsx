@@ -15,8 +15,14 @@ export default function PricingPlans({
   pendingSubscription,
 }: PricingPlansProps) {
   const navigate = useNavigate();
-  const [selectedUserType, setSelectedUserType] = useState<UserType>(initialUserType || 'public');
-  const [hasPendingSubscription, setHasPendingSubscription] = useState(!!pendingSubscription);
+
+  // Set selectedUserType to the logged-in user's type or default to 'public'
+  const [selectedUserType, setSelectedUserType] = useState<UserType>(
+    initialUserType || 'public'
+  );
+  const [hasPendingSubscription, setHasPendingSubscription] = useState(
+    !!pendingSubscription
+  );
 
   // Plan pricing logic based on user type
   const planPricing = {
@@ -43,33 +49,27 @@ export default function PricingPlans({
     },
   };
 
-  const isUniversityMember = selectedUserType === 'student' || selectedUserType === 'staff';
-
   // Define plans with pricing from planPricing based on selected user type
   const plans = [
     {
       title: 'Walk-In Plan',
       price: planPricing[selectedUserType].walkIn,
       duration: 'day',
-      
     },
     {
       title: 'Monthly Plan',
       price: planPricing[selectedUserType].monthly,
       duration: 'month',
-      
     },
     {
       title: 'Semesterly / Quarterly Plan',
       price: planPricing[selectedUserType].semesterly,
       duration: 'quarter',
-      
     },
     {
       title: 'Half-Yearly Plan',
       price: planPricing[selectedUserType].halfYearly,
       duration: 'half year',
-      
     },
     {
       title: 'Yearly Plan',
@@ -81,7 +81,9 @@ export default function PricingPlans({
 
   const handleSelectPlan = (plan: typeof plans[0]) => {
     if (hasPendingSubscription) {
-      alert('You already have a pending subscription. Please complete the payment or edit your plan.');
+      alert(
+        'You already have a pending subscription. Please complete the payment or edit your plan.'
+      );
       return;
     }
     if (!initialUserType) {
@@ -92,26 +94,34 @@ export default function PricingPlans({
   };
 
   const handleEditSubscription = () => {
-    navigate('/payment-pending', { state: { plan: pendingSubscription?.plan } });
+    navigate('/payment-pending', {
+      state: { plan: pendingSubscription?.plan },
+    });
   };
 
   useEffect(() => {
     if (pendingSubscription) {
-      const expirationTime = new Date(pendingSubscription.expiresAt).getTime();
+      const expirationTime = new Date(
+        pendingSubscription.expiresAt
+      ).getTime();
       const currentTime = Date.now();
 
       if (currentTime > expirationTime) {
         setHasPendingSubscription(false);
-        alert('Your pending subscription has expired. Please select a new plan.');
+        alert(
+          'Your pending subscription has expired. Please select a new plan.'
+        );
       }
     }
   }, [pendingSubscription]);
 
   return (
     <div className="space-y-8">
-      {allowTypeSelection && (
+      {allowTypeSelection && !initialUserType && (
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-[#002147] mb-4">Select User Type to View Pricing</h3>
+          <h3 className="text-lg font-semibold text-[#002147] mb-4">
+            Select User Type to View Pricing
+          </h3>
           <div className="flex space-x-4">
             <button
               onClick={() => setSelectedUserType('public')}
@@ -149,8 +159,13 @@ export default function PricingPlans({
 
       {hasPendingSubscription ? (
         <div className="bg-yellow-100 p-4 rounded-lg shadow-md">
-          <h4 className="text-md font-semibold text-yellow-800">Pending Subscription</h4>
-          <p>Please complete payment for your pending subscription or edit the plan.</p>
+          <h4 className="text-md font-semibold text-yellow-800">
+            Pending Subscription
+          </h4>
+          <p>
+            Please complete payment for your pending subscription or edit the
+            plan.
+          </p>
           <button
             onClick={handleEditSubscription}
             className="mt-2 px-4 py-2 bg-[#002147] text-white rounded-lg"
@@ -161,7 +176,11 @@ export default function PricingPlans({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map((plan, index) => (
-            <SubscriptionCard key={index} {...plan} onSelect={() => handleSelectPlan(plan)} />
+            <SubscriptionCard
+              key={index}
+              {...plan}
+              onSelect={() => handleSelectPlan(plan)}
+            />
           ))}
         </div>
       )}
