@@ -34,17 +34,58 @@ function RegistrationForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+  
+    // Allow only numbers for phone and studentId fields
+    if ((name === "phone" || name === "universityId") && !/^\d*$/.test(value)) {
+      return;
+    }
+  
+    // Restrict the length of phone number and student ID
+    if (name === "phone" && value.length > 10) {
+      return;
+    }
+    if (name === "universityId" && value.length > 8) {
+      return;
+    }
+  
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (formData.phone.length !== 10) {
+      setAlert({
+        type: "error",
+        message: "Phone number must be exactly 10 digits",
+      });
+      setIsModalOpen(true);
+      return;
+    }
+  
+    if (formData.userType === "student" && formData.universityId.length !== 8) {
+      setAlert({
+        type: "error",
+        message: "Student ID must be exactly 8 digits",
+      });
+      setIsModalOpen(true);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setAlert({
         type: "error",
         message: "Passwords do not match"
       })
+      setIsModalOpen(true);
+      return;
+    }
+
+    if (formData.hasMedicalCondition === "yes" && !formData.medicalCondition) {
+      setAlert({
+        type: "error",
+        message: "Please specify your medical condition",
+      });
       setIsModalOpen(true);
       return;
     }
