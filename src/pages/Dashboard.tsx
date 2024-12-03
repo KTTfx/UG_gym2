@@ -1,18 +1,21 @@
-// import { useLocation, Navigate } from 'react-router-dom';
-import UserDashboard from '../components/UserDashboard';
-
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import UserDashboard from '../components/UserDashboard';
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // Get the token from localStorage
-  const token = localStorage.getItem('token');
-  
-  // If no token exists, redirect to login
-  if (!token) {
-    navigate('/login');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  // If no token, show nothing while navigating
+  if (!localStorage.getItem('token')) {
+    return null; // or a loading spinner
   }
-  // You can remove the `subscription` and just rely on the one fetched within `UserDashboard`.
+
   return <UserDashboard />;
 }
