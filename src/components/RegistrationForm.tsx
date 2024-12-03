@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Modal from "./Modal"; // Import the AlertMessage component
 import { registerUser } from "../../public/API/api";
 
 function RegistrationForm() {
@@ -17,6 +18,9 @@ function RegistrationForm() {
     department: "",
     hallOfResidence: "",
   });
+
+  const [alert, setAlert] = useState({ type: "", message: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -37,16 +41,35 @@ function RegistrationForm() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match. Please try again.");
+      setAlert({
+        type: "error",
+        message: "Passwords do not match"
+      })
+      setIsModalOpen(true);
       return;
     }
 
     try {
       const response = await registerUser(formData);
-      alert(response.data.message); // show a success message
-      navigate("/login");
+      setAlert({
+        type: "success",
+        message: "User registration was successful"
+      });
+      setIsModalOpen(true);
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
+      setAlert({
+        type: "error",
+        message: error.response?.data?.message || "Something went wrong, please try again"
+      });
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleModalAction = () => {
+    if (alert.type === "success") {
+      navigate("/login");
+    } else {
+      setIsModalOpen(false);
     }
   };
 
@@ -56,6 +79,14 @@ function RegistrationForm() {
       className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md space-y-4"
     >
       <h2 className="text-2xl font-bold mb-4">Registration Form</h2>
+      {/* Modal popup message */}
+      <Modal
+        isOpen={isModalOpen}
+        type={alert.type}
+        message={alert.message}
+        onClose={() => setIsModalOpen(false)}
+        onAction={handleModalAction}
+      />
 
       {/* User Type Selection */}
       <div>
