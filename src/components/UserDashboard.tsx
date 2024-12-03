@@ -5,7 +5,7 @@ import SubscriptionStatus from './SubscriptionStatus';
 import PricingPlans from './PricingPlans';
 
 interface UserDashboardProps {
-  // user: User; The logged-in user's data should be passed here
+
 }
 
 export default function UserDashboard({ user }: UserDashboardProps) {
@@ -23,7 +23,7 @@ export default function UserDashboard({ user }: UserDashboardProps) {
     }
 
     // Fetch the logged-in user's data
-    fetch('/api/users/profile', {
+    fetch('http://localhost:4000/api/users/profile', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -32,12 +32,13 @@ export default function UserDashboard({ user }: UserDashboardProps) {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json();
+        return response.json(); // Don't manually parse JSON here
       })
       .then((data) => {
-        setUserData(data.user); // Set the logged-in user data
+        // console.log('User Data:', data); // Check if data is correct
+        setUserData(data); // Use data directly
       })
       .catch((error) => {
         console.error('Error fetching user data:', error);
