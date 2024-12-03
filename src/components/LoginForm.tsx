@@ -48,14 +48,20 @@ export default function LoginForm() {
 
       const response = await axios.post(loginEndpoint, payload);
 
-      // Store token and user data in localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('currentUser', JSON.stringify(response.data.user));
-      // Verify if data is saved correctly
-      console.log('Token:', localStorage.getItem('token'));
-      console.log('Current User:', localStorage.getItem('currentUser'));
-      
+      // Assuming response.data.user contains the full user data
+      const user = response.data.user;
 
+      // Remove password from the user object
+      const { password, ...userWithoutPassword } = user;
+
+      // Store the user data without the password in localStorage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+
+      // Verify if data is saved correctly
+      // console.log('Token:', localStorage.getItem('token'));
+      // console.log('Current User:', localStorage.getItem('currentUser'));
+      
       // Redirect based on user type
       if (response.data.user && response.data.user.userType) {
         switch (response.data.user.userType) {
