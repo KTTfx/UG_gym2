@@ -32,7 +32,7 @@ export default function SubscriptionStatus({ subscription, user }: SubscriptionS
       
       <div className="space-y-4">
         <p className="text-sm text-gray-600">
-          Plan: {isExpired ? 'No Active Plan' : subscription.duration}
+          Plan: {isExpired ? 'No Active Plan' : subscription.package}
         </p>
 
         {!isExpired ? (
@@ -54,7 +54,7 @@ export default function SubscriptionStatus({ subscription, user }: SubscriptionS
         <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
           <div
             className={`absolute left-0 top-0 h-full transition-[width] duration-1000 ease-in-out ${
-              isExpired ? 'bg-red-500' : 'bg-[#002147]'
+              isExpired ? 'bg-red-500' : 'bg-[#FFD700]'
             }`}
             style={{ width: `${progress}%` }}
           />
