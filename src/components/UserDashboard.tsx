@@ -4,16 +4,26 @@ import { Activity, Calendar, Clock, Award } from 'lucide-react';
 import SubscriptionStatus from './SubscriptionStatus';
 import PricingPlans from './PricingPlans';
 
-interface UserDashboardProps {
-
+interface Subscription {
+  package: string | null;
+  price: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  status: boolean;
+  pendingAt?: string; // field to track when the subscription was created
 }
 
-export default function UserDashboard({ user }: UserDashboardProps) {
+interface User {
+  firstName: string;
+  lastName: string;
+  userType: string;
+  subscription?: Subscription;
+}
+
+export default function UserDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'plans'>('overview');
-  const [pendingSubscription, setPendingSubscription] = useState<any>(null);
-  const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
-  const [userData, setUserData] = useState<User | null>(null); // To store the fetched user data
+  const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -34,47 +44,47 @@ export default function UserDashboard({ user }: UserDashboardProps) {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json(); // Don't manually parse JSON here
+        return response.json();
       })
       .then((data) => {
-        // console.log('User Data:', data); // Check if data is correct
-        setUserData(data); // Use data directly
+        setUserData(data);
       })
       .catch((error) => {
-        console.error('Error fetching user data:', error);
         navigate('/login');
       });
-
-    // Handle pending subscription logic
-    const pending = localStorage.getItem('pendingSubscription');
-    if (pending) {
-      const parsedPending = JSON.parse(pending);
-      const expiryTime = new Date(parsedPending.expiresAt).getTime();
-      if (Date.now() > expiryTime) {
-        localStorage.removeItem('pendingSubscription');
-      } else {
-        setPendingSubscription(parsedPending);
-      }
-    }
   }, [navigate]);
 
-  const handleCancelPendingSubscription = () => {
-    localStorage.removeItem('pendingSubscription');
-    setPendingSubscription(null);
-  };
-
-  const handleCompletePendingPayment = () => {
-    navigate('/payment-pending', {
-      state: {
-        plan: pendingSubscription.plan,
-        userType: pendingSubscription.userType,
-      },
-    });
-  };
-
-  const handleEditPlan = () => {
+  const handleChoosePlan = () => {
     setActiveTab('plans');
   };
+
+  // Check if the user has no subscription or if the package is null or an empty string
+  const noSubscription =
+    userData?.subscription && !userData.subscription.package;
+
+  // Check if the user has an active subscription
+  const hasActiveSubscription =
+    userData?.subscription && userData.subscription.status;
+
+  // Check if the user has a pending subscription (status is false)
+  const hasPendingSubscription = userData?.subscription && !userData.subscription.status;
+
+  // Calculate time remaining if the subscription is pending
+  const timeRemaining = hasPendingSubscription
+    ? calculateTimeRemaining(userData.subscription?.pendingAt)
+    : null;
+
+  function calculateTimeRemaining(pendingAt: string | undefined): string {
+    if (!pendingAt) return '';
+
+    const pendingTime = new Date(pendingAt).getTime();
+    const currentTime = Date.now();
+    const timeLeft = pendingTime + 48 * 60 * 60 * 1000 - currentTime; // 48 hours in ms
+    const hours = Math.floor(timeLeft / 1000 / 60 / 60);
+    const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+
+    return `${hours} hours and ${minutes} minutes`;
+  }
 
   if (!userData) {
     return (
@@ -106,17 +116,18 @@ export default function UserDashboard({ user }: UserDashboardProps) {
     );
   }
 
-  // Check if the user has subscription data
-  const hasSubscription = userData.subscription && userData.subscription.status === true;
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="bg-white rounded-xl shadow-md p-6 mb-8">
         <div className="flex items-center space-x-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[#002147]">{userData.firstName} {userData.lastName}</h1>
+            <h1 className="text-2xl font-bold text-[#002147]">
+              {userData.firstName} {userData.lastName}
+            </h1>
             <p className="text-gray-600">
-              {userData.userType.charAt(0).toUpperCase() + userData.userType.slice(1)} Member
+              {userData.userType.charAt(0).toUpperCase() +
+                userData.userType.slice(1)}{' '}
+              Member
             </p>
           </div>
         </div>
@@ -124,13 +135,21 @@ export default function UserDashboard({ user }: UserDashboardProps) {
         <div className="flex space-x-4 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-4 py-2 font-medium ${activeTab === 'overview' ? 'text-[#002147] border-b-2 border-[#002147]' : 'text-gray-500 hover:text-[#002147]'}`}
+            className={`px-4 py-2 font-medium ${
+              activeTab === 'overview'
+                ? 'text-[#002147] border-b-2 border-[#002147]'
+                : 'text-gray-500 hover:text-[#002147]'
+            }`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab('plans')}
-            className={`px-4 py-2 font-medium ${activeTab === 'plans' ? 'text-[#002147] border-b-2 border-[#002147]' : 'text-gray-500 hover:text-[#002147]'}`}
+            className={`px-4 py-2 font-medium ${
+              activeTab === 'plans'
+                ? 'text-[#002147] border-b-2 border-[#002147]'
+                : 'text-gray-500 hover:text-[#002147]'
+            }`}
           >
             Membership Plans
           </button>
@@ -139,32 +158,44 @@ export default function UserDashboard({ user }: UserDashboardProps) {
 
       {activeTab === 'overview' ? (
         <div className="space-y-8">
-          {pendingSubscription && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-              <h3 className="text-lg font-semibold text-yellow-800 mb-2">Pending Payment</h3>
-              <p className="text-yellow-700 mb-4">
-                You have a pending payment for the {pendingSubscription.plan.title}.
-                Please complete your payment within 48 hours.
+          {noSubscription ? (
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h3 className="font-semibold text-gray-700">No Subscription Found</h3>
+              <p className="text-gray-600">
+                Please select a plan to activate your membership.
               </p>
-              <div className="flex space-x-4">
-                <button
-                  onClick={handleCancelPendingSubscription}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCompletePendingPayment}
-                  className="bg-[#002147] text-white px-4 py-2 rounded-lg hover:bg-[#003167] transition-colors"
-                >
-                  Complete Payment
-                </button>
-              </div>
+              <button
+                onClick={handleChoosePlan}
+                className="mt-4 bg-[#002147] text-white px-6 py-2 rounded-lg hover:bg-[#003167] transition-colors"
+              >
+                Choose Plan
+              </button>
             </div>
-          )}
-
-          {/* Show the user's subscription status */}
-          {hasSubscription ? (
+          ) : hasPendingSubscription ? (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
+              <h3 className="text-lg font-semibold text-yellow-800 mb-2">
+                Pending Subscription
+              </h3>
+              <p className="text-yellow-700 mb-4">
+                You have a pending subscription of{' '}
+                <span className="font-semibold">
+                  {userData.subscription?.package}
+                </span>{' '}
+                awaiting a payment of{' '}
+                <span className="font-semibold">
+                  GHS {userData.subscription?.price}
+                </span>
+                . Please visit the facility to complete your payment within{' '}
+                {timeRemaining}.
+              </p>
+              <button
+                onClick={() => navigate('/payment-pending')}
+                className="bg-[#002147] text-white px-4 py-2 rounded-lg hover:bg-[#003167] transition-colors"
+              >
+                Complete Payment
+              </button>
+            </div>
+          ) : hasActiveSubscription ? (
             <div>
               <SubscriptionStatus subscription={userData.subscription} user={userData} />
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
@@ -201,9 +232,11 @@ export default function UserDashboard({ user }: UserDashboardProps) {
           ) : (
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="font-semibold text-gray-700">No Subscription Found</h3>
-              <p className="text-gray-600">Please choose a plan to get started.</p>
+              <p className="text-gray-600">
+                Please select a plan to activate your membership.
+              </p>
               <button
-                onClick={handleEditPlan}
+                onClick={handleChoosePlan}
                 className="mt-4 bg-[#002147] text-white px-6 py-2 rounded-lg hover:bg-[#003167] transition-colors"
               >
                 Choose Plan
@@ -212,7 +245,7 @@ export default function UserDashboard({ user }: UserDashboardProps) {
           )}
         </div>
       ) : (
-        <PricingPlans userType={userData?.userType} />
+        <PricingPlans userType={userData.userType} />
       )}
     </div>
   );
