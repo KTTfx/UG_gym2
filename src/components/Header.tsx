@@ -7,7 +7,7 @@ import logo from '../ug_gym_logo2.png';
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isLoggedIn = location.pathname.includes('/dashboard') || location.pathname.includes('/admin-dashboard');
+  const isLoggedIn = location.pathname.includes('/dashboard') || location.pathname.includes('/university-dashboard');
 
   const handleLogout = () => {
     navigate('/');
