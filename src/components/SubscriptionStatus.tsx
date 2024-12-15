@@ -9,8 +9,8 @@ interface SubscriptionStatusProps {
 export default function SubscriptionStatus({ subscription, user }: SubscriptionStatusProps) {
   const navigate = useNavigate();
   const today = new Date();
-  const startDate = new Date(subscription.startDate);
-  const endDate = new Date(subscription.endDate);
+  const startDate = new Date(user.subscription.startDate);
+  const endDate = new Date(user.subscription.endDate);
   const totalDays = (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
   const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 3600 * 24)));
   const progress = Math.max(0, Math.min(100, (daysLeft / totalDays) * 100));
