@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { UserType } from '../types';
 import SubscriptionCard from './SubscriptionCard';
+import Modal from "./Modal"; // Import the modal component
 
 interface PricingPlansProps {
   userType?: UserType;
@@ -23,6 +24,9 @@ export default function PricingPlans({
   const [hasPendingSubscription, setHasPendingSubscription] = useState(
     !!pendingSubscription
   );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
 
   // Plan pricing logic based on user type
   const planPricing = {
@@ -79,19 +83,64 @@ export default function PricingPlans({
     },
   ];
 
-  const handleSelectPlan = (plan: typeof plans[0]) => {
+  const handleSelectPlan = async (plan: typeof plans[0]) => {
     if (hasPendingSubscription) {
-      alert(
+      setModalMessage(
         'You already have a pending subscription. Please complete the payment or edit your plan.'
       );
+      setIsModalOpen(true);
       return;
     }
     if (!initialUserType) {
-      navigate('/register');
+      navigate('/login');
       return;
     }
-    navigate('/payment-pending', { state: { plan } });
+  
+    // Retrieve user ID from context or localStorage
+    const userId = localStorage.getItem('userId'); // Adjust based on your authentication system
+    console.log("UserId obtained from local storage: ", userId);
+    
+    if (!userId) {
+      setModalMessage('You must be logged in to add a subscription.');
+      setIsModalOpen(true);
+      return;
+    }
+  
+    // Prepare subscription data
+    const subscriptionData = {
+      userId: userId,
+      userType: selectedUserType,
+      package: plan.title,
+      price: plan.price,
+      // pendingAt: pendingAt,
+    };
+  
+    try {
+      const response = await fetch(
+        "http://localhost:4000/api/subscriptions/pending",
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(subscriptionData),
+        }
+      );
+  
+      if (response.ok) {
+        setHasPendingSubscription(true);
+        setModalMessage('Subscription added to pending state successfully!');
+      } else {
+        const errorData = await response.json();
+        setModalMessage(`Failed to add subscription: ${errorData.message}`);
+      }
+    } catch (error) {
+      setModalMessage('An error occurred while adding the subscription.');
+    } finally {
+      setIsModalOpen(true);
+    }
   };
+  
 
   const handleEditSubscription = () => {
     navigate('/payment-pending', {
@@ -108,9 +157,10 @@ export default function PricingPlans({
 
       if (currentTime > expirationTime) {
         setHasPendingSubscription(false);
-        alert(
+        setModalMessage(
           'Your pending subscription has expired. Please select a new plan.'
         );
+        setIsModalOpen(true);
       }
     }
   }, [pendingSubscription]);
@@ -184,6 +234,16 @@ export default function PricingPlans({
           ))}
         </div>
       )}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p>{modalMessage}</p>
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="mt-4 px-4 py-2 bg-[#002147] text-white rounded-lg"
+        >
+          Close
+        </button>
+      </Modal>
+
     </div>
   );
 }
