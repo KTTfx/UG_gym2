@@ -57,6 +57,7 @@ export default function LoginForm() {
       // Store the user data without the password in localStorage
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+      localStorage.setItem('userId', userWithoutPassword._id);
 
       // Verify if data is saved correctly
       // console.log('Token:', localStorage.getItem('token'));
