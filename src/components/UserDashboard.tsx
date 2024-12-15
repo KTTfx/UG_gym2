@@ -71,7 +71,7 @@ export default function UserDashboard() {
 
   // Calculate time remaining if the subscription is pending
   const timeRemaining = hasPendingSubscription
-    ? calculateTimeRemaining(userData.subscription?.pendingAt)
+    ? calculateTimeRemaining(userData?.pendingAt)
     : null;
 
   function calculateTimeRemaining(pendingAt: string | undefined): string {
