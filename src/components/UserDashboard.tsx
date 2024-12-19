@@ -166,7 +166,7 @@ export default function UserDashboard() {
 
       {activeTab === 'overview' ? (
         <div className="space-y-8">
-          {noSubscription || isCountdownExpired? (
+          {noSubscription || isCountdownExpired ? (
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="font-semibold text-gray-700">No Subscription Found</h3>
               <p className="text-gray-600">
