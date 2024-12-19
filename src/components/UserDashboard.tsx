@@ -74,17 +74,25 @@ export default function UserDashboard() {
     ? calculateTimeRemaining(userData?.pendingAt)
     : null;
 
-  function calculateTimeRemaining(pendingAt: string | undefined): string {
-    if (!pendingAt) return '';
+    const isCountdownExpired = hasPendingSubscription && !timeRemaining;
 
-    const pendingTime = new Date(pendingAt).getTime();
-    const currentTime = Date.now();
-    const timeLeft = pendingTime + 48 * 60 * 60 * 1000 - currentTime; // 48 hours in ms
-    const hours = Math.floor(timeLeft / 1000 / 60 / 60);
-    const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
-
-    return `${hours} hours and ${minutes} minutes`;
-  }
+    function calculateTimeRemaining(pendingAt: string | undefined): string | null {
+      if (!pendingAt) return null;
+    
+      const pendingTime = new Date(pendingAt).getTime();
+      const currentTime = Date.now();
+      const timeLeft = pendingTime + 48 * 60 * 60 * 1000 - currentTime; // 48 hours in ms
+    
+      if (timeLeft <= 0) {
+        return null; // Time is up
+      }
+    
+      const hours = Math.floor(timeLeft / 1000 / 60 / 60);
+      const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+    
+      return `${hours} hours and ${minutes} minutes`;
+    }
+    
 
   if (!userData) {
     return (
@@ -158,7 +166,7 @@ export default function UserDashboard() {
 
       {activeTab === 'overview' ? (
         <div className="space-y-8">
-          {noSubscription ? (
+          {noSubscription || isCountdownExpired? (
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="font-semibold text-gray-700">No Subscription Found</h3>
               <p className="text-gray-600">
