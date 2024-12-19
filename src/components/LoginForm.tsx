@@ -43,8 +43,8 @@ export default function LoginForm() {
 
       // API call to login endpoint
       const loginEndpoint = isUniversityMember 
-        ? 'http://localhost:4000/api/users/login/university' 
-        : 'http://localhost:4000/api/users/login/public'; // Dynamically determine route
+        ? 'https://ug-gym-backend.onrender.com/api/users/login/university' 
+        : 'https://ug-gym-backend.onrender.com/api/users/login/public'; // Dynamically determine route
 
       const response = await axios.post(loginEndpoint, payload);
 

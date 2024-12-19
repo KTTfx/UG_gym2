@@ -33,7 +33,7 @@ export default function UserDashboard() {
     }
 
     // Fetch the logged-in user's data
-    fetch('http://localhost:4000/api/users/profile', {
+    fetch('https://ug-gym-backend.onrender.com/api/users/profile', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
