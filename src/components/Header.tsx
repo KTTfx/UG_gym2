@@ -10,6 +10,10 @@ export default function Header() {
   const isLoggedIn = location.pathname.includes('/dashboard') || location.pathname.includes('/university-dashboard') || location.pathname.includes('/payment-pending');
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("pendingSubscription");
+    localStorage.removeItem("userId");
     navigate('/');
   };
 
