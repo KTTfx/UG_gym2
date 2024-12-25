@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import SubscriptionCard from '../components/SubscriptionCard';
+import mainGymPhoto2 from '../gym_building.jpg';
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ export default function Home() {
       <div 
         className="relative h-[600px] bg-cover bg-center"
         style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")'
+          backgroundImage: `url(${mainGymPhoto2})`
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50" />
@@ -85,7 +87,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <img
-                src="C:\Users\HP\CascadeProjects\UG_gym2\src\threadmill side gym.jpg"
+                src="src\Main_gym_photo.jpg"
                 alt="Modern gym equipment"
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
@@ -94,7 +96,7 @@ export default function Home() {
             </div>
             <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <img
-                src="C:\Users\HP\CascadeProjects\UG_gym2\src\Main gym photo.jpg"
+                src="src\threadmill_side_gym.jpg"
                 alt="Professional trainers"
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
@@ -103,7 +105,7 @@ export default function Home() {
             </div>
             <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <img
-                src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                src="src\leg training_main_gym.jpg"
                 alt="Flexible scheduling"
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
