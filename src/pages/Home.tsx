@@ -85,7 +85,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <img
-                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                src="C:\Users\HP\CascadeProjects\UG_gym2\src\threadmill side gym.jpg"
                 alt="Modern gym equipment"
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
@@ -94,7 +94,7 @@ export default function Home() {
             </div>
             <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <img
-                src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                src="C:\Users\HP\CascadeProjects\UG_gym2\src\Main gym photo.jpg"
                 alt="Professional trainers"
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
