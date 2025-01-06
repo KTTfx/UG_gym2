@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,6 +20,7 @@ export default function ResetPassword() {
   const handleResetPassword = async () => {
     setMessage('');
     setError('');
+    setLoading(true);
 
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match.');
@@ -25,7 +28,7 @@ export default function ResetPassword() {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/users/reset-password', {
+      const response = await fetch('https://ug-gym-backend.onrender.com/api/users/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
