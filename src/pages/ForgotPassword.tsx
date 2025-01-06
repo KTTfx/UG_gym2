@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSendOTP = async () => {
     setMessage('');
     setError('');
     try {
-      // Simulate API call for sending OTP
-      const response = await fetch('/api/send-otp', {
+      const response = await fetch('http://localhost:4000/api/users/send-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,8 +25,31 @@ export default function ForgotPassword() {
         throw new Error('Failed to send OTP. Please try again.');
       }
 
-      const data = await response.json();
       setMessage(`OTP sent successfully to ${email}.`);
+      setOtpSent(true);
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong.');
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    setMessage('');
+    setError('');
+    try {
+      const response = await fetch('http://localhost:4000/api/users/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid OTP. Please try again.');
+      }
+
+      setMessage('OTP verified successfully.');
+      navigate('/reset-password', { state: { email } });
     } catch (err: any) {
       setError(err.message || 'Something went wrong.');
     }
@@ -55,9 +80,32 @@ export default function ForgotPassword() {
           type="button"
           onClick={handleSendOTP}
           className="w-full bg-[#002147] text-white py-3 rounded-lg font-semibold hover:bg-[#003167] transition-colors"
+          disabled={otpSent}
         >
-          Send OTP
+          {otpSent ? 'OTP Sent' : 'Send OTP'}
         </button>
+
+        {otpSent && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              OTP Code
+            </label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#002147]"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={handleVerifyOTP}
+              className="w-full bg-[#002147] text-white py-3 rounded-lg font-semibold hover:bg-[#003167] transition-colors mt-4"
+            >
+              Confirm OTP
+            </button>
+          </div>
+        )}
 
         <p className="text-center text-sm text-gray-600">
           <Link to="/login" className="text-[#002147] font-semibold hover:underline">
