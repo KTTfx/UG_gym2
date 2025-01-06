@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -7,13 +8,15 @@ export default function ForgotPassword() {
   const [otpSent, setOtpSent] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSendOTP = async () => {
     setMessage('');
     setError('');
+    setLoading(true); // Show loading spinner
     try {
-      const response = await fetch('http://localhost:4000/api/users/send-otp', {
+      const response = await fetch('https://ug-gym-backend.onrender.com/api/users/send-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,14 +32,17 @@ export default function ForgotPassword() {
       setOtpSent(true);
     } catch (err: any) {
       setError(err.message || 'Something went wrong.');
+    } finally {
+      setLoading(false); // Hide loading spinner
     }
   };
 
   const handleVerifyOTP = async () => {
     setMessage('');
     setError('');
+    setLoading(true); // Show loading spinner
     try {
-      const response = await fetch('http://localhost:4000/api/users/verify-otp', {
+      const response = await fetch('https://ug-gym-backend.onrender.com/api/users/verify-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,6 +58,8 @@ export default function ForgotPassword() {
       navigate('/reset-password', { state: { email } });
     } catch (err: any) {
       setError(err.message || 'Something went wrong.');
+    } finally {
+      setLoading(false); // Hide loading spinner
     }
   };
 
@@ -63,7 +71,7 @@ export default function ForgotPassword() {
         {message && <div className="bg-green-50 text-green-500 p-3 rounded-lg text-center">{message}</div>}
         {error && <div className="bg-red-50 text-red-500 p-3 rounded-lg text-center">{error}</div>}
 
-        <div>
+        <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Email Address
           </label>
@@ -74,16 +82,15 @@ export default function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <button
+            type="button"
+            onClick={handleSendOTP}
+            className="absolute right-1 top-7 bg-[#002147] text-white py-1 px-3 rounded-lg font-semibold hover:bg-[#003167] transition-colors"
+            disabled={loading}
+          >
+            {loading ? 'Sending...' : 'Send OTP'}
+          </button>
         </div>
-
-        <button
-          type="button"
-          onClick={handleSendOTP}
-          className="w-full bg-[#002147] text-white py-3 rounded-lg font-semibold hover:bg-[#003167] transition-colors"
-          disabled={otpSent}
-        >
-          {otpSent ? 'OTP Sent' : 'Send OTP'}
-        </button>
 
         {otpSent && (
           <div>
@@ -101,8 +108,9 @@ export default function ForgotPassword() {
               type="button"
               onClick={handleVerifyOTP}
               className="w-full bg-[#002147] text-white py-3 rounded-lg font-semibold hover:bg-[#003167] transition-colors mt-4"
+              disabled={loading}
             >
-              Confirm OTP
+              {loading ? 'Verifying...' : 'Confirm OTP'}
             </button>
           </div>
         )}
@@ -113,6 +121,8 @@ export default function ForgotPassword() {
           </Link>
         </p>
       </form>
+
+      {loading && <LoadingSpinner />} {/* Show loading spinner */}
     </div>
   );
 }
