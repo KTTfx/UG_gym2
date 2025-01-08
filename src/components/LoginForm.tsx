@@ -88,6 +88,7 @@ export default function LoginForm() {
       // Handle error messages
       console.error('Login Error:', err); // Log the error for debugging
       setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setIsLoading(false)
     }
   };
 
