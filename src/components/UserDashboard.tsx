@@ -128,6 +128,13 @@ export default function UserDashboard() {
     <div className="container mx-auto px-4 py-8">
       <div className="bg-white rounded-xl shadow-md p-6 mb-8">
         <div className="flex items-center space-x-4 mb-6">
+          <div className="w-16 h-16 rounded-full overflow-hidden">
+            <img
+              src={userData.passportPhoto}
+              alt="Passport"
+              className="w-full h-full object-cover"
+            />
+          </div>
           <div>
             <h1 className="text-2xl font-bold text-[#002147]">
               {userData.firstName} {userData.lastName}
@@ -135,7 +142,13 @@ export default function UserDashboard() {
             <p className="text-gray-600">
               {userData.userType.charAt(0).toUpperCase() +
                 userData.userType.slice(1)}{' '}
-              Member
+              Member <span>   </span>
+              <button
+            // onClick={() => generateIdCardPdf(userId)}
+            className="ml-auto px-1 bg-[#D9D9D9] py-0 text-black rounded-lg hover:bg-[#B4B4B4] transition-colors"
+          >
+            Download ID
+          </button>
             </p>
           </div>
         </div>
