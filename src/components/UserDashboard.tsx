@@ -24,6 +24,9 @@ export default function UserDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'plans'>('overview');
   const [userData, setUserData] = useState<User | null>(null);
+  const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -52,7 +55,47 @@ export default function UserDashboard() {
       .catch((error) => {
         navigate('/login');
       });
-  }, [navigate]);
+  }, [navigate, setUserData]);
+
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setPassportPhoto(event.target.files[0]);
+      setShowConfirmModal(true)
+    }
+  };
+
+  const handlePhotoUpload = () => {
+    if (!passportPhoto) return;
+
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('passportPhoto', passportPhoto);
+
+    fetch('https://ug-gym-backend.onrender.com/api/users/profile', {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setUserData(data);
+      setPassportPhoto(null);
+      setShowConfirmModal(false);
+      window.location.reload();
+    })
+    .catch((error) => {
+      console.error('Error updating passport photo:', error);
+      setError('Error updating passport photo. Please try again.');
+    });
+  };
 
   const handleChoosePlan = () => {
     setActiveTab('plans');
@@ -128,16 +171,30 @@ export default function UserDashboard() {
     <div className="container mx-auto px-4 py-8">
       <div className="bg-white rounded-xl shadow-md p-6 mb-8">
         <div className="flex items-center space-x-4 mb-6">
-          <div className="w-16 h-16 rounded-full overflow-hidden">
-            <img
-              src={userData.passportPhoto}
-              alt="Passport"
+        <div className="relative w-16 h-16 rounded-full overflow-hidden">
+            <img 
+              src={passportPhoto ? URL.createObjectURL(passportPhoto) : userData.passportPhoto} 
+              alt="Passport" 
               className="w-full h-full object-cover"
             />
+            <button 
+              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 hover:opacity-100 transition-opacity"
+              onClick={() => document.getElementById('passportPhotoInput')?.click()}
+            >
+              Edit
+            </button>
+            <input
+              type="file"
+              id="passportPhotoInput"
+              style={{ display: 'none' }}
+              accept="image/*"
+              onChange={handlePhotoChange}
+            />
+            {/* {passportPhoto && <button onClick={handlePhotoUpload}>Upload Photo</button>} */}
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#002147]">
-              {userData.firstName} {userData.lastName}
+            {userData.firstName.charAt(0).toUpperCase() + userData.firstName.slice(1)} {userData.lastName.charAt(0).toUpperCase() + userData.lastName.slice(1)}
             </h1>
             <p className="text-gray-600">
               {userData.userType.charAt(0).toUpperCase() +
@@ -267,6 +324,27 @@ export default function UserDashboard() {
         </div>
       ) : (
         <PricingPlans userType={userData.userType} />
+      )}
+      {showConfirmModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p>Are you sure you want to update your photo?</p>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button 
+                className="bg-gray-300 px-4 py-2 rounded"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                No
+              </button>
+              <button 
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+                onClick={handlePhotoUpload}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
