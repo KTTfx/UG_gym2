@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Activity, Calendar, Clock, Award } from 'lucide-react';
 import SubscriptionStatus from './SubscriptionStatus';
 import PricingPlans from './PricingPlans';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+
+import gymLogo from '../assets/gym-logo.png';
+import schoolLogo from '../assets/school-logo.png';
 
 interface Subscription {
   package: string | null;
@@ -27,6 +32,7 @@ export default function UserDashboard() {
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showIdCard, setShowIdCard] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -101,6 +107,18 @@ export default function UserDashboard() {
     setActiveTab('plans');
   };
 
+  const generateIdCardPdf = () => {
+    const element = document.getElementById('id-card');
+    if (element) {
+      html2canvas(element).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        pdf.addImage(imgData, 'PNG', 10, 10, 180, 160);
+        pdf.save(`id-card-${userData._id}.pdf`);
+      });
+    }
+  };
+
   // Check if the user has no subscription or if the package is null or an empty string
   const noSubscription =
     userData?.subscription && !userData.subscription.package;
@@ -167,6 +185,12 @@ export default function UserDashboard() {
     );
   }
 
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="bg-white rounded-xl shadow-md p-6 mb-8">
@@ -201,7 +225,7 @@ export default function UserDashboard() {
                 userData.userType.slice(1)}{' '}
               Member <span>   </span>
               <button
-            // onClick={() => generateIdCardPdf(userId)}
+            onClick={() => setShowIdCard(true)}
             className="ml-auto px-1 bg-[#D9D9D9] py-0 text-black rounded-lg hover:bg-[#B4B4B4] transition-colors"
           >
             Download ID
@@ -341,6 +365,67 @@ export default function UserDashboard() {
                 onClick={handlePhotoUpload}
               >
                 Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* show id card */}
+      {showIdCard && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div id="id-card" className="relative w-96 h-60 bg-[#ffffff] text-black p-6 rounded-lg border-2 border-sky-500">
+              <div className="absolute top-2 left-2">
+                <img src={schoolLogo} alt="School Logo" className="w-26 h-16 object-cover" />
+              </div>
+              <div className="absolute top-2 right-2">
+                <img src={gymLogo} alt="Gym Logo" className="w-26 h-15 object-cover" />
+              </div>
+              <div className="absolute top-20 left-6 flex items-center p-5">
+                <div className='h-40 mb-20'>
+                  <img src={userData.passportPhoto} alt="Passport" className="w-24 h-24 object-cover rounded-full mb-20" />
+                </div>
+                {/* <p>{userData.membershipId}</p> */}
+                <div className="ml-20 mb-20 top-10">
+                  <div className='leading-4'>
+                    <p className="font-semibold text-[#16447A]">Name:</p>
+                    <p className='uppercase font-bold'>{userData.firstName.charAt(0).toUpperCase() + userData.firstName.slice(1)} {userData.lastName.charAt(0).toUpperCase() + userData.lastName.slice(1)}</p>
+                  </div>
+
+                  <div className='leading-4 mt-1'>
+                    <p className="font-semibold text-[#16447A]">Membership Plan:</p>
+                    <p className='uppercase font-bold'>{userData.subscription?.package}</p>
+                  </div>
+
+                  <div className='leading-4 mt-1'>
+                    <p className="font-semibold text-[#16447A]">Start Date:</p>
+                    <p className='uppercase font-bold'>{formatDate(userData.subscription?.startDate)}</p>
+                  </div>
+
+                  <div className='leading-4 mt-1'>
+                    <p className="font-semibold text-[#16447A]">End Date:</p>
+                    <p className='uppercase font-bold'>{formatDate(userData.subscription?.endDate)}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-15 absolute bottom-3 left-8 uppercase font-semibold">
+                {/* <p className="font-bold">Membership ID</p> */}
+                <p>{userData.membershipId}</p>
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button 
+                className="bg-gray-300 px-4 py-2 rounded"
+                onClick={() => setShowIdCard(false)}
+              >
+                Close
+              </button>
+              <button 
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+                onClick={generateIdCardPdf}
+              >
+                Download ID as PDF
               </button>
             </div>
           </div>
