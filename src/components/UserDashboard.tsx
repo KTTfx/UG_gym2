@@ -228,7 +228,7 @@ export default function UserDashboard() {
             onClick={() => setShowIdCard(true)}
             className="ml-auto px-1 bg-[#D9D9D9] py-0 text-black rounded-lg hover:bg-[#B4B4B4] transition-colors"
           >
-            Download ID
+            Generate ID
           </button>
             </p>
           </div>
