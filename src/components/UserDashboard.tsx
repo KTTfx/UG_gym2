@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Activity, Calendar, Clock, Award } from 'lucide-react';
 import SubscriptionStatus from './SubscriptionStatus';
 import PricingPlans from './PricingPlans';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 import gymLogo from '../assets/gym-logo.png';
 import schoolLogo from '../assets/school-logo.png';
@@ -105,18 +103,6 @@ export default function UserDashboard() {
 
   const handleChoosePlan = () => {
     setActiveTab('plans');
-  };
-
-  const generateIdCardPdf = () => {
-    const element = document.getElementById('id-card');
-    if (element) {
-      html2canvas(element).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 10, 10, 180, 160);
-        pdf.save(`id-card-${userData._id}.pdf`);
-      });
-    }
   };
 
   // Check if the user has no subscription or if the package is null or an empty string
@@ -420,12 +406,6 @@ export default function UserDashboard() {
                 onClick={() => setShowIdCard(false)}
               >
                 Close
-              </button>
-              <button 
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={generateIdCardPdf}
-              >
-                Download ID as PDF
               </button>
             </div>
           </div>
