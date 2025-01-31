@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { LogOut } from 'lucide-react'; // Import only necessary icons
 
 // Import your logo image
-import logo from '../ug_gym_logo2.png';
+import logo from '../optimized/ug_gym_logo2.png';
 
 export default function Header() {
   const navigate = useNavigate();

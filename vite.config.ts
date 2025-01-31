@@ -5,5 +5,16 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name].[hash][extname]'
+      }
+    }
+  },
+  assetsInclude: ['**/*.jpg', '**/*.png', '**/*.webp'],
+  optimizeDeps: {
+    exclude: ['sharp']
   }
 });

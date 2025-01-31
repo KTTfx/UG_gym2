@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import SubscriptionCard from '../components/SubscriptionCard';
-import mainGymPhoto2 from '../gym_building.jpg';
-import mainGymPhoto from '../Main_gym_photo.jpg';
-import threadmillPhoto from '../threadmill_side_gym.jpg';
-import legTrainingPhoto from '../leg_training_main_gym.jpg';
+import mainGymPhoto2 from '../optimized/gym_building.jpg?url';
+import mainGymPhoto from '../optimized/Main_gym_photo.jpg?url';
+import threadmillPhoto from '../optimized/threadmill_side_gym.jpg?url';
+import legTrainingPhoto from '../optimized/leg_training_main_gym.jpg?url';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -77,7 +77,8 @@ export default function Home() {
         <div 
           className="relative h-[600px] bg-cover bg-center"
           style={{
-            backgroundImage: `url(${mainGymPhoto2})`
+            backgroundImage: `url(${mainGymPhoto2})`,
+            contain: 'paint'
           }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-50" />
@@ -121,7 +122,9 @@ export default function Home() {
                   src={mainGymPhoto}
                   alt="Modern gym equipment"
                   className="absolute inset-0 w-full h-full object-cover rounded-lg"
-                  style={{ willChange: 'transform' }}
+                  style={{ contain: 'paint' }}
+                  decoding="sync"
+                  fetchPriority="high"
                 />
               </div>
               <h3 className="text-xl font-bold text-[#002147] mb-2">State-of-the-Art Equipment</h3>
@@ -133,7 +136,9 @@ export default function Home() {
                   src={threadmillPhoto}
                   alt="Professional trainers"
                   className="absolute inset-0 w-full h-full object-cover rounded-lg"
-                  style={{ willChange: 'transform' }}
+                  style={{ contain: 'paint' }}
+                  decoding="sync"
+                  fetchPriority="high"
                 />
               </div>
               <h3 className="text-xl font-bold text-[#002147] mb-2">Expert Guidance</h3>
@@ -145,7 +150,9 @@ export default function Home() {
                   src={legTrainingPhoto}
                   alt="Flexible scheduling"
                   className="absolute inset-0 w-full h-full object-cover rounded-lg"
-                  style={{ willChange: 'transform' }}
+                  style={{ contain: 'paint' }}
+                  decoding="sync"
+                  fetchPriority="high"
                 />
               </div>
               <h3 className="text-xl font-bold text-[#002147] mb-2">Flexible Hours</h3>
