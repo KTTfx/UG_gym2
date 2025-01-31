@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "./Modal"; // Import the AlertMessage component
-import { registerUser } from "../../public/API/api";
+import LoadingSpinner from "./LoadingSpinner"; // Import the LoadingSpinner component
+import axios from "axios";
 
 function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ function RegistrationForm() {
 
   const [alert, setAlert] = useState({ type: "", message: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -53,6 +55,7 @@ function RegistrationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (formData.phone.length !== 10) {
       setAlert({
@@ -91,18 +94,20 @@ function RegistrationForm() {
     }
 
     try {
-      const response = await registerUser(formData);
+      await axios.post("https://ug-gym-backend.onrender.com/api/users/register", formData);
       setAlert({
         type: "success",
         message: "User registration was successful"
       });
       setIsModalOpen(true);
-    } catch (error) {
+    } catch (err) {
       setAlert({
         type: "error",
-        message: error.response?.data?.message || "Something went wrong, please try again"
+        message: err.response?.data?.message || "Something went wrong, please try again"
       });
       setIsModalOpen(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -115,6 +120,7 @@ function RegistrationForm() {
   };
 
   return (
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
     <form
       onSubmit={handleSubmit}
       className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md space-y-4"
@@ -354,6 +360,8 @@ function RegistrationForm() {
         Register
       </button>
     </form>
+    {isLoading && <LoadingSpinner />} {/* Show loading spinner */}
+  </div>
   );
 }
 

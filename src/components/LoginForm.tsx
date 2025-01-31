@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Import axios for HTTP requests
 import { Link } from 'react-router-dom';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -12,13 +13,16 @@ export default function LoginForm() {
     password: '',
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
     
     if (isUniversityMember && !formData.universityId) {
       setError('University ID is required');
+      setIsLoading(true);
       return;
     }
   
@@ -84,6 +88,7 @@ export default function LoginForm() {
       // Handle error messages
       console.error('Login Error:', err); // Log the error for debugging
       setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setIsLoading(false)
     }
   };
 
@@ -203,6 +208,7 @@ export default function LoginForm() {
           </Link>
         </p>
       </form>
+      {isLoading && <LoadingSpinner />}
     </div>
   );
 }
